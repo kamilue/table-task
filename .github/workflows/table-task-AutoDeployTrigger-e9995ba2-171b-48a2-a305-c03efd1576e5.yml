@@ -1,0 +1,48 @@
+name: Trigger auto deployment for table-task
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/table-task-AutoDeployTrigger-e9995ba2-171b-48a2-a305-c03efd1576e5.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.TABLETASK_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.TABLETASK_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.TABLETASK_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: testowotabletask.azurecr.io
+          registryUsername: ${{ secrets.TABLETASK_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.TABLETASK_REGISTRY_PASSWORD }}
+          containerAppName: table-task
+          resourceGroup: Testowo
+          imageToBuild: testowotabletask.azurecr.io/table-task:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
