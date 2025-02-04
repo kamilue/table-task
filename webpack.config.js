@@ -26,10 +26,6 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: path.join(__dirname, 'dist'),
-    port: 3000,
-    hot: true,
-    allowedHosts:
-      'https://table-task.graypebble-41fe6fdb.polandcentral.azurecontainerapps.io/',
+    allowedHosts: 'all',
   },
 };
