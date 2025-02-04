@@ -37,5 +37,5 @@ To run the application in a Docker container:
 1. Build the Docker image:
 
 ```bash
-docker build -t my-app .
+docker build -t table-task .
 ```
