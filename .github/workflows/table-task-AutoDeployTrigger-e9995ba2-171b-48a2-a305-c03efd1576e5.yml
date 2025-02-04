@@ -4,19 +4,23 @@ name: Trigger auto deployment for table-task
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ master ]
+    branches: [master]
     paths:
-    - '**'
-    - '.github/workflows/table-task-AutoDeployTrigger-e9995ba2-171b-48a2-a305-c03efd1576e5.yml'
+      - '**'
+      - '.github/workflows/table-task-AutoDeployTrigger-e9995ba2-171b-48a2-a305-c03efd1576e5.yml'
 
-  # Allow manual trigger 
-  workflow_dispatch:      
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_REGISTRY: testowotabletask
+  CONTAINER_APP_NAME: table-task
+  RESOURCE_GROUP: Testowo
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       id-token: write #This is required for requesting the OIDC JWT Token
       contents: read #Required when GH token is used to authenticate with private repo
 
@@ -44,5 +48,3 @@ jobs:
           imageToBuild: testowotabletask.azurecr.io/table-task:${{ github.sha }}
           _buildArgumentsKey_: |
             _buildArgumentsValues_
-
-
